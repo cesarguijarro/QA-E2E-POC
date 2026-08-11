@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp"]
+    },
+    "jam": {
+      "serverUrl": "https://mcp.jam.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer jam_pat_znDgEYPdiJyBJS8uG2j9y3i3FJXLTll8k-rCakNNtyw"
+      }
+    }
+  }
+}

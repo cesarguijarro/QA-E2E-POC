@@ -17,8 +17,9 @@ import { test, expect } from '@playwright/test';
 test.describe('Jam Bug Reproduction: 14812124-d506-4ed1-aa63-1fb0d17829bf', () => {
   test('should reproduce "There is not a comparison active" error on Question Analysis view', async ({ page }) => {
     const projectId = '6a73a23ce4031b75f185e334';
-    const email = process.env.SIGHTX_USERNAME || 'cesarguijarro@gmail.com';
-    const password = process.env.SIGHTX_PASSWORD || 'dummyPassword123';
+    
+    const email = process.env.SIGHTX_USERNAME!;
+    const password = process.env.SIGHTX_PASSWORD!;
 
     // Track console errors
     const consoleErrors: string[] = [];
@@ -29,14 +30,18 @@ test.describe('Jam Bug Reproduction: 14812124-d506-4ed1-aa63-1fb0d17829bf', () =
     });
 
     // Step 1: Navigate to login / app entry
-    await page.goto('https://staging.sightx.io/');
+    await page.goto('https://app.staging-admin.sightx.io/login?redirectUrl=https://staging.sightx.io');
 
     // Handle authentication if redirected to login page
     if (page.url().includes('/login')) {
+      
       await page.fill('input#email', email);
       await page.fill('input#password', password);
+      await page.waitForTimeout(500);
       await page.click('button[type="submit"]');
-      await page.waitForURL((url) => url.origin === 'https://staging.sightx.io', { timeout: 15000 });
+
+
+      await page.waitForURL((url) => url.origin === 'https://app.staging-admin.sightx.io/login?redirectUrl=https://staging.sightx.io', { timeout: 15000 });
     }
 
     // Step 2: Open target project tile from project dashboard

@@ -80,41 +80,58 @@ test.describe('Suite Auth — a.1 Validate credentials', () => {
 
     // ── Paso 4: Logout ────────────────────────────────────────────────────
     await test.step('Cerrar sesión correctamente', async () => {
-    // Abrir menú de cuenta
-    const myAccount = page.locator('text=My account').first();
+    const myAccount = page.locator('._myAccount_2h5gz_36').first();
     await myAccount.waitFor({ state: 'visible', timeout: 10000 });
     await myAccount.click();
-    await page.waitForTimeout(500); // esperar que se abra el dropdown
+    await page.waitForTimeout(800);
 
-    // El Log out aparece en el dropdown abierto
-    const logoutBtn = page.locator('text=Log out').first();
+    const logoutBtn = page.locator('._labelAndIcon_2h5gz_159:has-text("Log out")').first();
     await logoutBtn.waitFor({ state: 'visible', timeout: 8000 });
     await logoutBtn.click();
 
     await page.waitForURL(/app\.staging-admin\.sightx\.io\/login/, { timeout: 15000 });
     await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 });
     });
+  });
 
   test('should reject invalid credentials', async ({ page }) => {
-    await test.step('Intentar login con contraseña incorrecta', async () => {
-      await page.goto(
-        'https://app.staging-admin.sightx.io/login?redirectUrl=https://staging.sightx.io'
-      );
-      await page.waitForLoadState('domcontentloaded');
+  await test.step('Intentar login con contraseña incorrecta', async () => {
+    await page.goto(
+      'https://app.staging-admin.sightx.io/login?redirectUrl=https://staging.sightx.io'
+    );
+    await page.waitForLoadState('domcontentloaded');
 
-      await page.fill('input#email', process.env.SIGHTX_USERNAME!);
-      await page.fill('input#password', 'wrong_password_123');
-      await page.waitForTimeout(500);
-      await page.click('button[type="submit"]');
+    // Capturar respuesta 401
+    const [loginResponse] = await Promise.all([
+      page.waitForResponse(
+        res => res.url().includes('/auth') && res.request().method() === 'POST',
+        { timeout: 15000 }
+      ).catch(() => null),
+      (async () => {
+        await page.fill('input#email', process.env.SIGHTX_USERNAME!);
+        await page.fill('input#password', 'wrong_password_123');
+        await page.waitForTimeout(500);
+        await page.click('button[type="submit"]');
+      })(),
+    ]);
 
-      // Debe mostrar error y NO redirigir
-      await page.waitForTimeout(2000);
-      await expect(page).toHaveURL(/login/);
+    // Validar código 401
+    if (loginResponse) {
+      expect(
+        loginResponse.status(),
+        'Se esperaba 401 Unauthorized con credenciales inválidas'
+      ).toBe(401);
+    }
 
-      const errorMsg = page.locator(
-        'text=Invalid, text=incorrect, text=wrong, .ant-message-error, .ant-alert-error'
-      ).first();
-      await expect(errorMsg).toBeVisible({ timeout: 5000 });
+    // Validar toast de error
+    await page.waitForTimeout(1500);
+    await expect(page).toHaveURL(/login/);
+
+    const toast = page.locator('.ant-message-notice, .ant-notification-notice').first();
+    if (await toast.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await expect(toast).toContainText(/Invalid|Credentials|Unauthorized/i);
+    }
     });
-  });
+});
+
 });

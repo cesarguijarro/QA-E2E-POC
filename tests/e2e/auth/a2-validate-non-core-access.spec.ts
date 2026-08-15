@@ -87,18 +87,19 @@ test.describe('Suite Auth — a.2 Validate Non-Core access', () => {
     });
 
     // ── Paso 4: Logout ────────────────────────────────────────────────────
-    await test.step('Cerrar sesión desde Non-Core', async () => {
-      const myAccount = page.locator('text=My account').first();
-      await myAccount.waitFor({ state: 'visible', timeout: 10000 });
-      await myAccount.click();
+  await test.step('Cerrar sesión correctamente', async () => {
+    const myAccount = page.locator('._myAccount_2h5gz_36').first();
+    await myAccount.waitFor({ state: 'visible', timeout: 10000 });
+    await myAccount.click();
+    await page.waitForTimeout(800);
 
-      const logoutBtn = page.locator('text=Log out').last();
-      await logoutBtn.waitFor({ state: 'visible', timeout: 5000 });
-      await logoutBtn.click();
+    const logoutBtn = page.locator('._labelAndIcon_2h5gz_159:has-text("Log out")').first();
+    await logoutBtn.waitFor({ state: 'visible', timeout: 8000 });
+    await logoutBtn.click();
 
-      await page.waitForURL(/app\.staging-admin\.sightx\.io\/login/, { timeout: 15000 });
-      await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 });
-    });
+    await page.waitForURL(/app\.staging-admin\.sightx\.io\/login/, { timeout: 15000 });
+    await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 });
+  });
 
     // ── Paso 5: Validar errores ───────────────────────────────────────────
     await test.step('Validar ausencia de errores inesperados', async () => {

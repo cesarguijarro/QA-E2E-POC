@@ -50,56 +50,43 @@ test.describe('Suite Auth — a.2 Validate Non-Core access', () => {
       await expect(page).toHaveURL(/staging\.sightx\.io/);
     });
 
-    // ── Paso 2: Cambiar a workspace Non-Core ─────────────────────────────
-    await test.step('Cambiar a workspace Non-Core', async () => {
-      // El switcher de workspace suele estar en el header o sidebar
-      const workspaceSwitcher = page.locator(
-        '[class*="workspace"], [class*="org"], [class*="switcher"], text=Non-Core'
-      ).first();
+    // ── Paso 2: Cambiar a workspace Non-Core (Admin) ──────────────────────
+    await test.step('Cambiar a workspace Non-Core via Admin', async () => {
+      const myAccount = page.locator('._myAccount_2h5gz_36').first();
+      await myAccount.waitFor({ state: 'visible', timeout: 10000 });
+      await myAccount.click();
+      await page.waitForTimeout(800);
 
-      await workspaceSwitcher.waitFor({ state: 'visible', timeout: 10000 });
-      await workspaceSwitcher.click();
+      // Non-Core se accede via el link "Admin"
+      const adminLink = page.locator('a[href="https://app.staging-admin.sightx.io"]').first();
+      await adminLink.waitFor({ state: 'visible', timeout: 8000 });
+      await adminLink.click();
 
-      // Si hay un dropdown, buscar la opción Non-Core
-      const nonCoreOption = page.locator('text=Non-Core').first();
-      if (await nonCoreOption.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await nonCoreOption.click();
-      }
-
+      await page.waitForURL(/app\.staging-admin\.sightx\.io/, { timeout: 20000 });
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(1000);
-
-      // Validar que estamos en Non-Core
-      await expect(
-        page.locator('text=Non-Core').first()
-      ).toBeVisible({ timeout: 10000 });
     });
 
     // ── Paso 3: Validar acceso en Non-Core ───────────────────────────────
     await test.step('Validar que el dashboard de Non-Core cargó correctamente', async () => {
-      await expect(page).toHaveURL(/staging\.sightx\.io/);
-
-      // Debe mostrar el dashboard con proyectos o contenido de Non-Core
-      const dashboardContent = page.locator(
-        'text=Projects, text=Welcome, [class*="dashboard"], [class*="project"]'
-      ).first();
-      await expect(dashboardContent).toBeVisible({ timeout: 10000 });
+      await expect(page).toHaveURL(/app\.staging-admin\.sightx\.io/);
+      await expect(page.locator('text=New Account')).toBeVisible({ timeout: 10000 });
     });
 
-    // ── Paso 4: Logout ────────────────────────────────────────────────────
-  await test.step('Cerrar sesión correctamente', async () => {
-    const myAccount = page.locator('._myAccount_2h5gz_36').first();
-    await myAccount.waitFor({ state: 'visible', timeout: 10000 });
-    await myAccount.click();
-    await page.waitForTimeout(800);
+    // ── Paso 4: Logout desde Admin (Non-Core) ────────────────────────────
+    await test.step('Cerrar sesión desde Non-Core', async () => {
+      const myAccount = page.locator('.leftMenu_text__Xmfk5:has-text("My account")').first();
+      await myAccount.waitFor({ state: 'visible', timeout: 10000 });
+      await myAccount.click();
+      await page.waitForTimeout(800);
 
-    const logoutBtn = page.locator('._labelAndIcon_2h5gz_159:has-text("Log out")').first();
-    await logoutBtn.waitFor({ state: 'visible', timeout: 8000 });
-    await logoutBtn.click();
+      const logoutBtn = page.locator('text=Log out').first();
+      await logoutBtn.waitFor({ state: 'visible', timeout: 8000 });
+      await logoutBtn.click();
 
-    await page.waitForURL(/app\.staging-admin\.sightx\.io\/login/, { timeout: 15000 });
-    await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 });
-  });
+      await page.waitForURL(/login/, { timeout: 15000 });
+      await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 });
+    });
+
 
     // ── Paso 5: Validar errores ───────────────────────────────────────────
     await test.step('Validar ausencia de errores inesperados', async () => {

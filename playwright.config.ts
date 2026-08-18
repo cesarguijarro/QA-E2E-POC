@@ -1,36 +1,16 @@
-import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-
-  fullyParallel: true,
-
-  forbidOnly: !!process.env.CI,
-
-  retries: process.env.CI ? 2 : 0,
-
-  workers: process.env.CI ? 1 : undefined,
-
-  reporter: 'html',
-
-  use: {
-    baseURL: 'https://staging.sightx.io',
-
-    trace: 'on-first-retry',
-
-    screenshot: 'only-on-failure',
-
-    video: 'retain-on-failure',
-
-    ...devices['Desktop Chrome'],
+  timeout: 120000,
+  expect: {
+    timeout: 10000,
   },
-
-  projects: [
-    {
-      name: 'chromium',
-    },
-  ],
+  use: {
+    headless: false,
+    viewport: { width: 1280, height: 720 },
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  reporter: [['html', { open: 'never' }]],
 });

@@ -55,8 +55,13 @@ test.describe('Suite Build — b.1 Validate basic Project Creation', () => {
       await expect(page.locator('text=Welcome')).toBeVisible({ timeout: 10000 });
     });
 
-    // ── Step 2: Create new project from scratch ───────────────────────────
-    await test.step('Create new project from scratch', async () => {
+        // ── Step 2:  → ir a folder E2E → Create from scratch → nombre → Create → build...
+    await test.step('Create new project from scratch in E2E folder', async () => {
+      // Navigate to E2E folder
+      await page.goto('https://staging.sightx.io/folder/6a8f71c82f8a3c001da460b0');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
       // Open "Start a new project" dropdown
       const startBtn = page.locator('button:has-text("Start a new project")').first();
       await startBtn.waitFor({ state: 'visible', timeout: 10000 });
@@ -64,20 +69,18 @@ test.describe('Suite Build — b.1 Validate basic Project Creation', () => {
       await page.waitForTimeout(500);
 
       // Select "Create from scratch"
-      
       const scratchOption = page.locator('._customOption_13vre_1:has-text("Create from scratch")').first();
-
       await scratchOption.waitFor({ state: 'visible', timeout: 8000 });
       await scratchOption.click();
+      await page.waitForTimeout(500);
 
-      // Enter project name
-      const nameInput = page.locator('input.ant-input').first();
+      // Enter project name — target modal input specifically
+      const nameInput = page.locator('.ant-modal-body input.ant-input, input[placeholder="Write here..."]').first();
       await nameInput.waitFor({ state: 'visible', timeout: 8000 });
       await nameInput.fill(PROJECT_NAME);
-      await page.waitForTimeout(300);
 
       // Click Create
-      const createBtn = page.locator('button:has-text("Create")').first();
+      const createBtn = page.locator('[data-e2e-selector="accept-button"]').first();
       await createBtn.click();
 
       // Wait for redirect to build page

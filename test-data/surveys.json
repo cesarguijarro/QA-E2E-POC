@@ -1,0 +1,38 @@
+{
+  "$comment": "Surveys the execution tests run against. key: unique name (use with SURVEY_KEY=key). testId: catalog ID the result is reported under. url: respondent link. answers (optional): questionLabel -> option labels to pin; every other question is answered randomly (seeded). enabled: false skips it unless selected with SURVEY_KEY.",
+  "surveys": [
+    {
+      "key": "mc-basic-pinned",
+      "testId": "EXEC-MC-01",
+      "description": "MC questions, fixed answers for the labelled ones, random for the rest",
+      "url": "https://survey.staging.sightx.io/14fd6b964b484e46bea547f5f24f815dab5aff825084a0dc1587dc39b9b72511",
+      "answers": {
+        "MCSS": [
+          "OPTION - 1"
+        ],
+        "MCMS": [
+          "OPTION - 2",
+          "OPTION - 3"
+        ]
+      }
+    },
+    {
+      "key": "mc-basic-random",
+      "testId": "EXEC-DYN-01",
+      "description": "Same survey, every Multiple Choice question answered randomly",
+      "url": "https://survey.staging.sightx.io/14fd6b964b484e46bea547f5f24f815dab5aff825084a0dc1587dc39b9b72511"
+    },
+    {
+      "key": "single-q-logic",
+      "description": "Demographics survey with logic (was hardcoded in singleQwithLogic.spec.ts). Not verified with the runner yet: try SURVEY_KEY=single-q-logic, then set enabled to true.",
+      "url": "https://survey.staging.sightx.io/6349f7dc75eb0cbb1af39ad0d90a87b6c7679f623f6a8b040d515300dc75aefd",
+      "enabled": false
+    },
+    {
+      "key": "all-question-types",
+      "description": "Mixed question types: grid, text/numeric, slider, scale, Likert (was hardcoded in happy_path.spec.ts and happy_path_ant.ts). The runner only handles Multiple Choice so far.",
+      "url": "https://survey.staging.sightx.io/eb6a13812600854fdb647839399076c5deddf726199964de7978901ee31e972c",
+      "enabled": false
+    }
+  ]
+}

@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { surveyUrl } from '../../utils/surveys';
 import { SurveyPage } from '../../pages/SurveyPage';
 
 test('Smoke test: validar interacción con componentes complejos', async ({ page }) => {
   const survey = new SurveyPage(page);
 
   // 1. Entra a la URL de tu build de encuesta
-  await survey.navigate('https://survey.staging.sightx.io/6349f7dc75eb0cbb1af39ad0d90a87b6c7679f623f6a8b040d515300dc75aefd');
+  await survey.navigate(surveyUrl('single-q-logic'));
 
   // 2. Prueba una selección simple o input de texto inicial
   await survey.selectOption('25-34');

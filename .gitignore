@@ -12,3 +12,4 @@ node_modules/
 
 # Local test-run history (persist it via CI artifacts or a dedicated branch instead of committing it)
 /qa-history/
+.agents/mcp_config.json

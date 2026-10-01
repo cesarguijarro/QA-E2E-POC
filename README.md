@@ -49,11 +49,22 @@ The custom reporter (`reporters/history-reporter.ts`) appends to:
 artifacts into `qa-history/ci/<run>/` and run `npm run qa:summary` (it merges everything below the folder and ignores duplicates).
 Later you can move this to a dedicated `qa-history` branch or a database without changing the record format.
 
+## Surveys under test (`test-data/surveys.json`)
+Surveys are hand-built in the platform, so each one is registered here with its respondent link; no link or
+question id lives in code. Entries: `key`, `url`, optional `testId` (catalog ID), `answers` (pin options by the
+`questionLabel` set in the builder; everything else is answered randomly) and `enabled`.
+```bash
+SURVEY_KEY=mc-basic-pinned npx playwright test tests/execution      # one survey
+SURVEY_LINK=<respondent url> npx playwright test tests/execution    # ad-hoc, all random
+```
+Specs that drive the page by hand use `surveyUrl('<key>')` from `utils/surveys.ts`. `npm run qa:validate` fails
+if a survey link is hardcoded anywhere in `tests/`, `pages/`, `helpers/`, `flows/` or `utils/`.
+
 ## Replaying a random failure
 Tests that answer surveys randomly use a seeded generator (`utils/random.ts`). Each run gets a seed, printed in the
 test output, attached to the test as a `seed` annotation and stored in `qa-history`. To replay a failure exactly:
 ```bash
-QA_SEED=<seed from the failed run> npx playwright test tests/dynamic-survey.spec.ts
+QA_SEED=<seed from the failed run> npx playwright test tests/execution/survey-execution.spec.ts
 ```
 Use `rngFor(test.info())` in a test and pass the result to helpers; never call `Math.random()` in test code.
 

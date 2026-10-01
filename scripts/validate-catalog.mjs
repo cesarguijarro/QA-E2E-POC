@@ -43,8 +43,26 @@ for (const { file, data, error } of entries) {
 const specFiles = walk(path.join(root, 'tests'), (n) => /\.(spec|test)\.[cm]?[jt]sx?$/.test(n));
 const tagged = new Map(); // id -> Set(files)
 const untagged = [];
+
+// Parameter-driven specs build their titles from test-data/surveys.json, so the IDs live there.
+const surveyFile = path.join(root, 'test-data', 'surveys.json');
+const driven = specFiles.filter((f) => readFileSync(f, 'utf8').includes('loadSurveys('));
+if (existsSync(surveyFile) && driven.length) {
+  let surveys = [];
+  try { surveys = JSON.parse(readFileSync(surveyFile, 'utf8')).surveys ?? []; } catch (e) { err(`test-data/surveys.json: invalid JSON (${e.message})`); }
+  const seenIds = new Map();
+  for (const sv of surveys) {
+    if (!sv.testId) { if (sv.enabled !== false) warn(`test-data/surveys.json: survey "${sv.key}" has no testId, so its results are unmapped`); continue; }
+    if (seenIds.has(sv.testId)) warn(`test-data/surveys.json: testId ${sv.testId} is used by "${seenIds.get(sv.testId)}" and "${sv.key}"; their history will be merged`);
+    seenIds.set(sv.testId, sv.key);
+    if (!tagged.has(sv.testId)) tagged.set(sv.testId, new Set());
+    for (const f of driven) tagged.get(sv.testId).add(path.relative(root, f).split(path.sep).join('/'));
+  }
+}
+
 for (const f of specFiles) {
   const rel = path.relative(root, f).split(path.sep).join('/');
+  if (driven.includes(f)) continue; // titles are generated; handled above
   const lines = readFileSync(f, 'utf8').split(/\r?\n/);
   lines.forEach((line, i) => {
     if (!/^\s*test(\.(only|fixme|fail|skip))?\(\s*[`'"]/.test(line)) return; // test titles only, not describe
@@ -71,6 +89,16 @@ for (const [id, { file, data }] of byId) {
   if (data.status === 'draft' && tagged.has(id)) warn(`${file}: status is "draft" but [${id}] already has a test; update the status`);
 }
 for (const loc of untagged) warn(`untagged test (no [TEST-ID] in title): ${loc}`);
+
+// 3b. Survey links belong in test-data/surveys.json, never in code
+const SURVEY_LINK = /https?:\/\/survey[\w.-]*\.sightx\.io\/[0-9a-f]{16,}/;
+for (const dir of ['tests', 'pages', 'helpers', 'flows', 'utils']) {
+  for (const f of walk(path.join(root, dir), (n) => /\.[cm]?[jt]sx?$/.test(n))) {
+    readFileSync(f, 'utf8').split(/\r?\n/).forEach((line, i) => {
+      if (SURVEY_LINK.test(line)) err(`${path.relative(root, f).split(path.sep).join('/')}:${i + 1}: hardcoded survey link; add it to test-data/surveys.json and use surveyUrl('<key>')`);
+    });
+  }
+}
 
 // 4. Report
 console.log(`Catalog entries: ${byId.size} | tagged test IDs in specs: ${tagged.size} | untagged tests: ${untagged.length}`);

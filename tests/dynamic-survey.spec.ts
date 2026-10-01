@@ -43,6 +43,7 @@ test('[EXEC-DYN-01] Ejecutar encuesta de forma 100% dinámica con motor de regla
   });
 
   await page.goto('https://survey.staging.sightx.io/14fd6b964b484e46bea547f5f24f815dab5aff825084a0dc1587dc39b9b72511');
+  
 
   await expect.poll(() => rawItems, { timeout: 15000 }).not.toBeNull();
   await page.waitForTimeout(1000);

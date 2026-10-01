@@ -25,7 +25,7 @@ test.describe('Suite Auth — a.2 Validate Non-Core access', () => {
     });
   });
 
-  test('should login, switch to Non-Core workspace and logout', async ({ page }) => {
+  test('[AUTH-A2-01] should login, switch to Non-Core workspace and logout', async ({ page }) => {
     const email    = process.env.SIGHTX_USERNAME!;
     const password = process.env.SIGHTX_PASSWORD!;
 

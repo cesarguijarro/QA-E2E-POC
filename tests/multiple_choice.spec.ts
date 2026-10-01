@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Ejecución de Encuestas - Flujo E2E Multiple Choice', () => {
 
-  test('Debería responder encuestas de Multiple Choice, navegar entre páginas y enviar resultados', async ({ page }) => {
+  test('[EXEC-MC-01] Debería responder encuestas de Multiple Choice, navegar entre páginas y enviar resultados', async ({ page }) => {
     
     // ----------------------------------------------------
     // PASO 1: Carga Inicial y Página 1 (No Randomize)

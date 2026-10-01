@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "id": "BUILD-B1-01",
+  "title": "Create a project with Numeric and MC questions, conditional display and disqualification logic",
+  "suite": "build",
+  "priority": "P0",
+  "status": "automated",
+  "spec": "tests/e2e/build/b1-basic-project-creation.spec.ts",
+  "version": 1,
+  "covers": {
+    "questionTypes": ["numeric", "multiple-choice"],
+    "logic": ["display-logic", "disqualification"],
+    "areas": ["project-creation", "survey-builder"]
+  },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

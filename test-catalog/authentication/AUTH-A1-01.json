@@ -1,0 +1,13 @@
+{
+  "$schema": "../schema.json",
+  "id": "AUTH-A1-01",
+  "title": "Login with valid credentials and logout",
+  "suite": "authentication",
+  "priority": "P0",
+  "status": "automated",
+  "spec": "tests/e2e/auth/a1-validate-credentials.spec.ts",
+  "version": 1,
+  "covers": { "areas": ["login", "logout", "dashboard-access"] },
+  "links": { "jam": ["https://jam.dev/c/65aa1a32-5698-498c-a99d-98c8799b198c"] },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

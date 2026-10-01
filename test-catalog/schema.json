@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test case catalog entry",
+  "type": "object",
+  "required": ["id", "title", "suite", "priority", "status", "spec"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9]*(-[A-Z0-9]+)+$", "description": "Same ID used in the spec title, e.g. [AUTH-A1-01]" },
+    "title": { "type": "string", "minLength": 5 },
+    "suite": { "enum": ["authentication", "build", "execution", "distribution", "analysis", "other"] },
+    "priority": { "enum": ["P0", "P1", "P2", "P3"] },
+    "status": { "enum": ["draft", "automated", "flaky", "blocked", "deprecated"] },
+    "blockedReason": { "type": "string" },
+    "spec": { "type": "string", "description": "Path to the spec file that implements it (required unless status is draft)" },
+    "owner": { "type": "string" },
+    "version": { "type": "integer", "minimum": 1 },
+    "covers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "questionTypes": { "type": "array", "items": { "type": "string" } },
+        "logic": { "type": "array", "items": { "type": "string" } },
+        "areas": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "jam": { "type": "array", "items": { "type": "string" } },
+        "issues": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "change"],
+        "additionalProperties": false,
+        "properties": { "date": { "type": "string" }, "change": { "type": "string" } }
+      }
+    }
+  }
+}

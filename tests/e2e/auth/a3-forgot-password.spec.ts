@@ -127,7 +127,7 @@ test.describe('Suite Auth — a.3 Forgot password flow', () => {
     });
   });
 
-  test('should complete forgot password flow and login with new password', async ({ page }) => {
+  test('[AUTH-A3-01] should complete forgot password flow and login with new password', async ({ page }) => {
     const email = process.env.GMAIL_USER!;
 
     if (!email || !process.env.GMAIL_APP_PASSWORD) {

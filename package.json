@@ -6,7 +6,13 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:headless": "HEADLESS=true playwright test",
+    "qa:validate": "node scripts/validate-catalog.mjs",
+    "qa:summary": "node scripts/history-summary.mjs",
+    "qa:report": "npm run qa:validate && playwright test && npm run qa:summary"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

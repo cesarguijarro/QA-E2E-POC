@@ -1,0 +1,13 @@
+{
+  "$schema": "../schema.json",
+  "id": "AUTH-A3-01",
+  "title": "Forgot password flow, then login with the new password",
+  "suite": "authentication",
+  "priority": "P1",
+  "status": "blocked",
+  "blockedReason": "Reset email is read over IMAP and that part is still WIP (see commit history)",
+  "spec": "tests/e2e/auth/a3-forgot-password.spec.ts",
+  "version": 1,
+  "covers": { "areas": ["forgot-password", "email-delivery", "login"] },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

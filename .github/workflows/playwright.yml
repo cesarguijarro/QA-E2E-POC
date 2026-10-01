@@ -8,6 +8,13 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      QA_ENV: staging
+      SIGHTX_USERNAME: ${{ secrets.SIGHTX_USERNAME }}
+      SIGHTX_PASSWORD: ${{ secrets.SIGHTX_PASSWORD }}
+      SIGHTX_NEW_PASSWORD: ${{ secrets.SIGHTX_NEW_PASSWORD }}
+      GMAIL_USER: ${{ secrets.GMAIL_USER }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -15,13 +22,24 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
+    - name: Validate test catalog
+      run: npm run qa:validate
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
+    - name: Summarize history
+      if: ${{ !cancelled() }}
+      run: npm run qa:summary
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: qa-history-${{ github.run_id }}-${{ github.run_attempt }}
+        path: qa-history/
+        retention-days: 90

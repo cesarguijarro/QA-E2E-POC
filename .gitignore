@@ -1,4 +1,6 @@
-
+# Secrets
+.env
+.agents/mcp_config.json
 
 # Playwright
 node_modules/
@@ -7,3 +9,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Local test-run history (persist it via CI artifacts or a dedicated branch instead of committing it)
+/qa-history/

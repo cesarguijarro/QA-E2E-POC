@@ -25,7 +25,7 @@ test.describe('Suite Auth — a.1 Validate credentials', () => {
     });
   });
 
-  test('should login with valid credentials and logout successfully', async ({ page }) => {
+  test('[AUTH-A1-01] should login with valid credentials and logout successfully', async ({ page }) => {
     const email    = process.env.SIGHTX_USERNAME!;
     const password = process.env.SIGHTX_PASSWORD!;
 
@@ -94,7 +94,7 @@ test.describe('Suite Auth — a.1 Validate credentials', () => {
     });
   });
 
-  test('should reject invalid credentials', async ({ page }) => {
+  test('[AUTH-A1-02] should reject invalid credentials', async ({ page }) => {
   await test.step('Intentar login con contraseña incorrecta', async () => {
     await page.goto(
       'https://app.staging-admin.sightx.io/login?redirectUrl=https://staging.sightx.io'

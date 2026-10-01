@@ -1,0 +1,12 @@
+{
+  "$schema": "../schema.json",
+  "id": "AUTH-A1-02",
+  "title": "Reject invalid credentials",
+  "suite": "authentication",
+  "priority": "P1",
+  "status": "automated",
+  "spec": "tests/e2e/auth/a1-validate-credentials.spec.ts",
+  "version": 1,
+  "covers": { "areas": ["login", "negative-path"] },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

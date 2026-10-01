@@ -7,7 +7,7 @@
     "jam": {
       "serverUrl": "https://mcp.jam.dev/mcp",
       "headers": {
-        "Authorization": "Bearer jam_pat_znDgEYPdiJyBJS8uG2j9y3i3FJXLTll8k-rCakNNtyw"
+        "Authorization": "Bearer <JAM_TOKEN - keep the real one out of git>"
       }
     }
   }

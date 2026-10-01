@@ -1,0 +1,12 @@
+{
+  "$schema": "../schema.json",
+  "id": "AUTH-A2-01",
+  "title": "Login, switch to Non-Core workspace and logout",
+  "suite": "authentication",
+  "priority": "P1",
+  "status": "automated",
+  "spec": "tests/e2e/auth/a2-validate-non-core-access.spec.ts",
+  "version": 1,
+  "covers": { "areas": ["login", "workspace-switch", "logout"] },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

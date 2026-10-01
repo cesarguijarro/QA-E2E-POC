@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "id": "EXEC-MC-01",
+  "title": "Answer Multiple Choice questions (single, multi, randomize, flip), navigate pages and submit",
+  "suite": "execution",
+  "priority": "P0",
+  "status": "automated",
+  "spec": "tests/multiple_choice.spec.ts",
+  "version": 1,
+  "covers": {
+    "questionTypes": ["multiple-choice"],
+    "logic": ["randomization", "page-navigation"],
+    "areas": ["survey-execution", "submit"]
+  },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { answerMultipleChoiceQuestion } from '../helpers/MultipleChoiceHelper';
+import { rngFor } from '../utils/random';
 
-// Function to find the 'items' array at any level of the JSON
 function extractItems(data: any): any[] | null {
   if (!data || typeof data !== 'object') return null;
   if (Array.isArray(data.items) && data.items.length > 0) return data.items;
@@ -16,16 +16,17 @@ function extractItems(data: any): any[] | null {
   return null;
 }
 
-test('Run a dynamic survey based on the SightX API', async ({ page }) => {
-  console.log('--- INITIATING DYNAMIC TEST ---');
+test('[EXEC-DYN-01] Ejecutar encuesta de forma 100% dinámica con motor de reglas en SightX', async ({ page }) => {
+  console.log('--- INICIANDO TEST DINÁMICO REGLAS DE NEGOCIO ---');
+  const rng = rngFor(test.info());
+  console.log(`Seed: ${process.env.QA_SEED} (replay with QA_SEED=${process.env.QA_SEED})`);
 
   let rawItems: any[] | null = null;
 
-  // 1. Listen to the network for responses tolerant to subdomains and parameters
+  // Escuchar red para capturar API de survey-service
   page.on('response', async (response) => {
     try {
       const url = response.url();
-      // Filter by any API call that contains 'survey' or 'sightx'
       if (response.status() === 200 && (url.includes('survey') || url.includes('sightx'))) {
         const contentType = response.headers()['content-type'] || '';
         if (contentType.includes('application/json')) {
@@ -33,43 +34,28 @@ test('Run a dynamic survey based on the SightX API', async ({ page }) => {
           const items = extractItems(json);
           
           if (items && items.length > 0) {
-            console.log(`\n[API SUCCESSFULLY CAPTURED] Endpoint: ${url}`);
-            console.log(`-> ${items.length} items extracted from the JSON.`);
+            console.log(`\n[API CAPTURADA EXITOSAMENTE] Endpoint: ${url}`);
             rawItems = items;
           }
         }
       }
-    } catch {
-      // Ignore incomplete stream reads
-    }
+    } catch {}
   });
 
-  // 2. Navigate to the survey
   await page.goto('https://survey.staging.sightx.io/14fd6b964b484e46bea547f5f24f815dab5aff825084a0dc1587dc39b9b72511');
 
-  // 3. Wait for 'rawItems' to be populated
-  await expect.poll(() => rawItems, {
-    message: 'Waiting for the SightX API to respond with the list of items',
-    timeout: 15000,
-  }).not.toBeNull();
+  await expect.poll(() => rawItems, { timeout: 15000 }).not.toBeNull();
+  await page.waitForTimeout(1000);
 
-  console.log(`-> Questions to process on the page: ${rawItems!.length}`);
-
-  // 4. Wait for the page to finish rendering (React/Vue)
-  await page.waitForTimeout(1200);
-
-  // 5. Answer Multiple Choice questions
+  // Delegar las interacciones al Helper inteligente
   for (const item of rawItems!) {
-    if (item.type === 'multiple') {
-      console.log(`-> Answering question ID: ${item.frontendId}`);
-      await answerMultipleChoiceQuestion(page, item);
+    if (item.type === 'multiple' || item.type === 'multiple-choice') {
+      await answerMultipleChoiceQuestion(page, item, undefined, rng);
     }
   }
 
-  // 6. Advance to the next page or submit
   const nextButton = page.locator('#nextPageId, button:has-text("Submit"), button:has-text("Next")').first();
   if (await nextButton.isVisible()) {
-    console.log('-> Advancing to the next page...');
     await nextButton.click();
   }
 });

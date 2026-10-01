@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "id": "EXEC-DYN-01",
+  "title": "Answer a survey dynamically from the survey-service payload (rule-driven Multiple Choice helper)",
+  "suite": "execution",
+  "priority": "P1",
+  "status": "automated",
+  "spec": "tests/dynamic-survey.spec.ts",
+  "version": 1,
+  "covers": {
+    "questionTypes": ["multiple-choice"],
+    "logic": ["exclusive-options", "min-max-responses", "other-option"],
+    "areas": ["survey-execution"]
+  },
+  "changelog": [{ "date": "2026-09-30", "change": "Catalog entry created from existing spec" }]
+}
